@@ -1,0 +1,22 @@
+CREATE TABLE `game_jp` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `unique_id` varchar(100) COLLATE utf8mb4_unicode_ci,
+  `nsuid` varchar(20) COLLATE utf8mb4_unicode_ci,
+  `code` varchar(10) COLLATE utf8mb4_unicode_ci,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci,
+  `maker` varchar(100) COLLATE utf8mb4_unicode_ci,
+  `makerkana` varchar(20) COLLATE utf8mb4_unicode_ci,
+  `price` int(10),
+  `release_date` date,
+  `soft_type` varchar(20) COLLATE utf8mb4_unicode_ci,
+  `platform_id` int(10),
+  `dliconflg` int(10),
+  `url` varchar(255),
+  `img` varchar(255),
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk` (`unique_id`),
+  KEY `ix_created_at` (`created_at`),
+  KEY `ix_updated_at` (`updated_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

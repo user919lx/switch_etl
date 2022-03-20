@@ -1,0 +1,22 @@
+[[source]]
+url = "https://mirrors.cloud.tencent.com/pypi/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+algoliasearch = "*"
+flake8 = "*"
+black = "*"
+pymysql = "*"
+arrow = "*"
+pandas = "*"
+openpyxl = "*"
+python-slugify = "*"
+zhconv = "*"
+click = "*"
+beautifulsoup4 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
