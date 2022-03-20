@@ -15,6 +15,7 @@ python-slugify = "*"
 zhconv = "*"
 click = "*"
 beautifulsoup4 = "*"
+xlrd = "*"
 
 [dev-packages]
 

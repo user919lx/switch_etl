@@ -1,9 +1,9 @@
 # Project
 data/
-input/
-ouput/
 supervisor.conf
 
+
+start.sh
 .data
 .DS_Store
 nginx.conf
