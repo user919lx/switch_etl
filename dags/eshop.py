@@ -70,17 +70,17 @@ with DAG(
         env=env,
     )
     etl_game_hk = BashOperator(
-        task_id="etl_game_jp",
+        task_id="etl_game_hk",
         bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py -r hk",
         env=env,
     )
     etl_game_na = BashOperator(
-        task_id="etl_game_jp",
+        task_id="etl_game_na",
         bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py -r na",
         env=env,
     )
     etl_game_eu = BashOperator(
-        task_id="etl_game_jp",
+        task_id="etl_game_eu",
         bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py -r eu",
         env=env,
     )
@@ -95,6 +95,6 @@ with DAG(
     spider_game_raw_eu >> etl_game_eu
     spider_game_raw_hk >> etl_game_hk
 
-    [etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> spider_price
+    [spider_eshop, etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> spider_price
 
 # spider_eshop -> spider_price -> etl_price_etl
