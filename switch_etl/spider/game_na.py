@@ -27,8 +27,13 @@ class GameNASpider:
             "esrbRating:Everyone 10+",
             "esrbRating:Teen",
             "esrbRating:Mature",
-            'availability:Pre-order', 'availability:Coming soon', 'availability:Available now',
-            'franchises:Mario', 'franchises:Zelda', 'franchises:Pokémon', 'franchises:Kirby',
+            "availability:Pre-order",
+            "availability:Coming soon",
+            "availability:Available now",
+            "franchises:Mario",
+            "franchises:Zelda",
+            "franchises:Pokémon",
+            "franchises:Kirby",
         ]
         for rating in rlist:
             for iparam in ilist:
@@ -39,7 +44,7 @@ class GameNASpider:
                 if len(resp["hits"]) > 0:
                     self.__save_resp_data(resp)
                     page_number = resp["nbPages"]
-                    while page+1 < page_number:
+                    while page + 1 < page_number:
                         page += 1
                         resp = self.fetch_response(iparam, rating, page, hit_perpage)
                         row_number = len(resp["hits"])
@@ -72,5 +77,6 @@ class GameNASpider:
             "facets": facets,
             "facetFilters": f'[["{rating}"],["platform:Nintendo Switch"]]',
         }
+
         resp = index.search("", search_params)
         return resp
