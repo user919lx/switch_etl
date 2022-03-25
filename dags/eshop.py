@@ -25,7 +25,9 @@ with DAG(
     tags=['eshop'],
 ) as dag:
 
+    crawler_root = "/home/ubuntu/Projects/crawler/switch"
+    crawler_python = "/home/ubuntu/.local/share/virtualenvs/crawler-BBmXFxCd/bin/python"
     eshop = BashOperator(
         task_id='eshop',
-        bash_command='cd /home/ubuntu/Projects/crawler & pipenv shell & scrapy crawl eshop',
+        bash_command=f'cd {crawler_root} && {crawler_python} -m scrapy crawl eshop',
     )
