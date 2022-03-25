@@ -64,6 +64,11 @@ with DAG(
         bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py na-spider",
         env=env,
     )
+    spider_db = BashOperator(
+        task_id="spider_db",
+        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py db-spider",
+        env=env,
+    )
     etl_game_jp = BashOperator(
         task_id="etl_game_jp",
         bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-pipeline -r jp",
