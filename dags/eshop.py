@@ -66,22 +66,22 @@ with DAG(
     )
     etl_game_jp = BashOperator(
         task_id="etl_game_jp",
-        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py -r jp",
+        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-pipeline -r jp",
         env=env,
     )
     etl_game_hk = BashOperator(
         task_id="etl_game_hk",
-        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py -r hk",
+        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-pipeline -r hk",
         env=env,
     )
     etl_game_na = BashOperator(
         task_id="etl_game_na",
-        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py -r na",
+        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-pipeline -r na",
         env=env,
     )
     etl_game_eu = BashOperator(
         task_id="etl_game_eu",
-        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py -r eu",
+        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-pipeline -r eu",
         env=env,
     )
     spider_price = BashOperator(
