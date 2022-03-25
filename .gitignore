@@ -3,7 +3,7 @@ data/
 output/
 supervisor.conf
 
-
+*.cfg
 start.sh
 .data
 .DS_Store
