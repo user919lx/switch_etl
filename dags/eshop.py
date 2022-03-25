@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+from airflow.models import Variable
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
 
@@ -24,10 +24,17 @@ with DAG(
     catchup=False,
     tags=['eshop'],
 ) as dag:
-
-    crawler_root = "/home/ubuntu/Projects/crawler/switch"
-    crawler_python = "/home/ubuntu/.local/share/virtualenvs/crawler-BBmXFxCd/bin/python"
+    MYSQL_HOST = Variable.get("MYSQL_HOST")
+    MYSQL_PWD = Variable.get("MYSQL_PWD")
+    MYSQL_USER = Variable.get("MYSQL_USER")
+    crawler_root = Variable.get("CRAWLER_ROOT")
+    crawler_python = Variable.get("CRAWLER_PYTHON")
     eshop = BashOperator(
         task_id='eshop',
         bash_command=f'cd {crawler_root} && {crawler_python} -m scrapy crawl eshop',
+        env={
+            "MYSQL_HOST": MYSQL_HOST,
+            "MYSQL_PWD": MYSQL_PWD,
+            "MYSQL_USER": MYSQL_USER,
+        },
     )
