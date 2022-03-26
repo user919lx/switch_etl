@@ -63,9 +63,9 @@ class GameHKPipeline(GamePipeline):
             "name": name,
             "name_sc": name_sc,
             "release_date": self.process_date(row["release_date"]),
-            "url": row["link"],
-            "maker_publisher": row.get("maker_publisher"),
-            "product_code": row["product_code"],
+            "url": row["link"].strip(),
+            "maker_publisher": row.get("maker_publisher").strip(),
+            "product_code": row["product_code"].strip(),
         }
         return data
 
@@ -118,7 +118,6 @@ class GameNAPipeline(GamePipeline):
             "lowestPrice": "lowest_price",
             "priceRange": "price_range",
             "esrbRating": "esrb_rating",
-            "numOfPlayers": "num_of_players",
         }
         row_data = {}
         for key, value in row.items():
@@ -132,6 +131,16 @@ class GameNAPipeline(GamePipeline):
                 row_data["url"] = urljoin(base, value)
             elif key in ("developers", "publishers", "genres"):
                 row_data[key] = ",".join(value)
+            elif key == "numOfPlayers":
+                num_of_players_str = row_data[key]
+                num_of_players = None
+                if num_of_players_str:
+                    m = re.search(r"up to (\d)+ players", num_of_players_str)
+                    if num_of_players_str == "1 player":
+                        num_of_players = 1
+                    elif m:
+                        num_of_players = int(m.group(1))
+                row_data["num_of_players"] = num_of_players
         return row_data
 
 
