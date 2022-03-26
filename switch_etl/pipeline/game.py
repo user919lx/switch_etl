@@ -132,11 +132,10 @@ class GameNAPipeline(GamePipeline):
             elif key in ("developers", "publishers", "genres"):
                 row_data[key] = ",".join(value)
             elif key == "numOfPlayers":
-                num_of_players_str = row_data[key]
                 num_of_players = None
-                if num_of_players_str:
-                    m = re.search(r"up to (\d)+ players", num_of_players_str)
-                    if num_of_players_str == "1 player":
+                if value:
+                    m = re.search(r"up to (\d)+ players", value)
+                    if value == "1 player":
                         num_of_players = 1
                     elif m:
                         num_of_players = int(m.group(1))

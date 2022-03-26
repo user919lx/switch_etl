@@ -16,7 +16,7 @@ CREATE TABLE `game_na` (
   `lowest_price` decimal(10,2) COMMENT '史低价格(美元)',
   `price_range` varchar(100),
   `esrb_rating` varchar(100),
-  `num_of_players` varchar(100),
+  `num_of_players` int(4) COMMENT '支持本地最大人数',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
