@@ -93,7 +93,7 @@ with DAG(
     )
 
     spider_game_na_mult = BashOperator(
-        task_id="spider_price",
+        task_id="spider_game_na_mult",
         bash_command=f"cd {crawler_root} && {crawler_python} -m scrapy crawl game_na_mult",
         env=env,
     )
