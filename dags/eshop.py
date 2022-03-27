@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from airflow.models import Variable
-
+# from airflow.providers.mysql.operators.mysql import MySqlOperator
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
 
@@ -25,14 +25,11 @@ with DAG(
     catchup=False,
     tags=["eshop"],
 ) as dag:
-
-    MYSQL_HOST = Variable.get("MYSQL_HOST")
-    MYSQL_PWD = Variable.get("MYSQL_PWD")
-    MYSQL_USER = Variable.get("MYSQL_USER")
     env = {
-        "MYSQL_HOST": MYSQL_HOST,
-        "MYSQL_PWD": MYSQL_PWD,
-        "MYSQL_USER": MYSQL_USER,
+        "MYSQL_HOST": Variable.get("MYSQL_HOST"),
+        "MYSQL_PWD": Variable.get("MYSQL_PWD"),
+        "MYSQL_USER": Variable.get("MYSQL_USER"),
+        "MYSQL_PORT": Variable.get("MYSQL_PORT")
     }
     crawler_root = Variable.get("CRAWLER_ROOT") + "/switch"
     crawler_python = Variable.get("CRAWLER_PYTHON")
@@ -95,11 +92,24 @@ with DAG(
         env=env,
     )
 
+    spider_game_na_mult = BashOperator(
+        task_id="spider_price",
+        bash_command=f"cd {crawler_root} && {crawler_python} -m scrapy crawl game_na_mult",
+        env=env,
+    )
+
+    # game_clean = MySqlOperator(
+    #     task_id="spider_price",
+    #     bash_command=f"cd {crawler_root} && {crawler_python} -m scrapy crawl price",
+    #     env=env,
+    # )
+
     spider_game_raw_jp >> etl_game_jp
     spider_game_raw_na >> etl_game_na
     spider_game_raw_eu >> etl_game_eu
     spider_game_raw_hk >> etl_game_hk
-
+    # [etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> game_clean
     [spider_eshop, etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> spider_price
+    etl_game_na >> spider_game_na_mult
 
 # spider_eshop -> spider_price -> etl_price_etl

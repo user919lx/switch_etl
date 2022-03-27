@@ -127,8 +127,11 @@ class GameNAPipeline(GamePipeline):
             elif key == "releaseDateDisplay":
                 row_data["release_date"] = self.process_date(value)
             elif key == "url":
-                base = "https://www.nintendo.com/"
-                row_data["url"] = urljoin(base, value)
+                if row["title"] == "Worms W.M.D":
+                    row_data["url"] = "https://www.nintendo.com/store/products/worms-w-m-d-switch/"
+                else:
+                    base = "https://www.nintendo.com/"
+                    row_data["url"] = urljoin(base, value)
             elif key in ("developers", "publishers", "genres"):
                 row_data[key] = ",".join(value)
             elif key == "numOfPlayers":
