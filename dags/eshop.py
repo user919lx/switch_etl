@@ -30,7 +30,7 @@ eu_lowest_price,na_lowest_price,
 CURRENT_TIMESTAMP created_at
 from game_db db left join (
 select nsuid eu_nsuid,
-replace(replace(replace (name,'™',''),'®',''),'’','\'') eu_name, 
+replace(replace(replace (name,'™',''),'®',''),'’',"'") eu_name,
 SUBSTR(product_code,5) code,lowest_price eu_lowest_price,
 num_of_players eu_num_of_players
 from game_eu
@@ -46,7 +46,7 @@ where trim(product_code)!=''
 ) hk on db.code = hk.code
 left join (
 select nsuid na_nsuid,
-replace(replace(replace (name,'™',''),'®',''),'’','\'') na_name,
+replace(replace(replace (name,'™',''),'®',''),'’',"'") na_name,
 lowest_price na_lowest_price,
 num_of_players na_num_of_players
 from game_na
