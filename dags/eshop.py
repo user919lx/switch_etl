@@ -1,11 +1,56 @@
 from datetime import datetime, timedelta
 from airflow.models import Variable
-# from airflow.providers.mysql.operators.mysql import MySqlOperator
+from airflow.providers.mysql.operators.mysql import MySqlOperator
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
 
 # Operators; we need this to operate!
 from airflow.operators.bash import BashOperator
+
+
+clean_sql = """
+truncate table game_clean
+;insert into game_clean
+select
+    db.code,
+    db.name db_name,
+    case
+    when eu_name is not null then eu_name
+    when na_name is not null then na_name
+    ELSE db.en_name
+    end en_name,
+    if (jp.jp_name is not null, jp.jp_name, db.jp_name) jp_name,
+    if (hk_name is not null, hk_name, db.`cn_name`) cn_name,
+    cast(case
+    when eu_num_of_players is not null then eu_num_of_players
+    ELSE db.`num_of_players`
+    end as unsigned) num_of_players,
+jp_nsuid,hk_nsuid,eu_nsuid,na_nsuid,
+eu_lowest_price,na_lowest_price,
+CURRENT_TIMESTAMP created_at
+from game_db db left join (
+select nsuid eu_nsuid,
+replace(replace(replace (name,'™',''),'®',''),'’','\'') eu_name, 
+SUBSTR(product_code,5) code,lowest_price eu_lowest_price,
+num_of_players eu_num_of_players
+from game_eu
+) eu on db.code = eu.code
+left join (
+select nsuid jp_nsuid,name jp_name, SUBSTR(code,4) code
+from game_jp
+) jp on db.code = jp.code
+left join (
+select nsuid hk_nsuid,name_sc hk_name,SUBSTR(trim(product_code),5) code
+from game_hk
+where trim(product_code)!=''
+) hk on db.code = hk.code
+left join (
+select nsuid na_nsuid,
+replace(replace(replace (name,'™',''),'®',''),'’','\'') na_name,
+lowest_price na_lowest_price,
+num_of_players na_num_of_players
+from game_na
+) na on eu.eu_name = na.na_name""".split(";")
 
 with DAG(
     "eshop",
@@ -98,17 +143,17 @@ with DAG(
         env=env,
     )
 
-    # game_clean = MySqlOperator(
-    #     task_id="spider_price",
-    #     bash_command=f"cd {crawler_root} && {crawler_python} -m scrapy crawl price",
-    #     env=env,
-    # )
+    game_clean = MySqlOperator(
+        task_id="game_clean",
+        sql=clean_sql,
+        mysql_conn_id="switch_ol",
+    )
 
     spider_game_raw_jp >> etl_game_jp
     spider_game_raw_na >> etl_game_na
     spider_game_raw_eu >> etl_game_eu
     spider_game_raw_hk >> etl_game_hk
-    # [etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> game_clean
+    [etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> game_clean
     [spider_eshop, etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> spider_price
     etl_game_na >> spider_game_na_mult
 
