@@ -5,7 +5,7 @@ import json
 class PricePipeline(Pipeline):
     def process(self):
         self.db.open()
-        iter = self.db.record_iter("price_raw", batch_size=10000)
+        iter = self.db.record_iter("price_raw", batch_size=1000)
         i = 0
         for rows in iter:
             item_list = []
