@@ -7,6 +7,7 @@ from switch_etl.pipeline.game import GamePipelineFactory
 from switch_etl.spider.game_na import GameNASpider
 from switch_etl.spider.game_db import GameDBSpider
 from switch_etl.pipeline.content import ContentPipeline
+from switch_etl.pipeline.price import PricePipeline
 
 
 def init_logging(
@@ -94,6 +95,12 @@ def na_spider():
 def db_spider():
     spider = GameDBSpider(MYSQL_CONFIG)
     spider.fetch_data_all()
+
+
+@cli.command()
+def price_etl():
+    pipeline = PricePipeline(MYSQL_CONFIG)
+    pipeline.process()
 
 
 if __name__ == "__main__":
