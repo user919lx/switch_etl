@@ -6,9 +6,9 @@ class PricePipeline(Pipeline):
     def process(self):
         self.db.open()
         iter = self.db.record_iter("price_raw", batch_size=10000)
-        item_list = []
         i = 0
         for rows in iter:
+            item_list = []
             for row in rows:
                 raw_data = json.loads(row[3])
                 data = {
