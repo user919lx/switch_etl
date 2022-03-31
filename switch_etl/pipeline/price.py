@@ -12,7 +12,7 @@ class PricePipeline(Pipeline):
     def process(self):
         self.query_storage.open()
         self.save_storage.open()
-        iter = self.query_storage.record_iter("price_raw", batch_size=1000)
+        iter = self.query_storage.record_iter("price_raw", batch_size=10000)
         i = 0
         for rows in iter:
             item_list = []
