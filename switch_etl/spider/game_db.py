@@ -59,12 +59,16 @@ class GameDBSpider:
             contents = f.read()
             soup = BeautifulSoup(contents, "html.parser")
             games = soup.find_all("game")
+            i = 0
             for game in games:
                 data = self.__parse_game(game)
                 try:
                     self.storage.save("game_db", data)
+                    i += 1
+                    if i % 500 == 0:
+                        logging.info(f"have saved {i} rows")
                 except Exception as e:
-                    print("error", e, data)
+                    logging.info(f"error {e} {data}")
 
     def fetch_data_all(self):
         self.storage.open()
