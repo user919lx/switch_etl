@@ -22,5 +22,6 @@ class PricePipeline(Pipeline):
                 item_list.append(data)
             i += 1
             print(f"iter {i} times")
-            self.db.save_many("price_raw_new", item_list)
+            if item_list:
+                self.db.save_many("price_raw_new", item_list)
         self.db.close()
