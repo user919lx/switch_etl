@@ -1,11 +1,18 @@
 from switch_etl.pipeline import Pipeline
 import json
+from switch_etl.db import MySQLStorage
 
 
 class PricePipeline(Pipeline):
+
+    def __init__(self, mysql_config):
+        self.query_storage = MySQLStorage(mysql_config)
+        self.save_storage = MySQLStorage(mysql_config)
+
     def process(self):
-        self.db.open()
-        iter = self.db.record_iter("price_raw", batch_size=1000)
+        self.query_storage.open()
+        self.save_storage.open()
+        iter = self.query_storage.record_iter("price_raw", batch_size=1000)
         i = 0
         for rows in iter:
             item_list = []
@@ -23,5 +30,6 @@ class PricePipeline(Pipeline):
             i += 1
             print(f"iter {i} times")
             if item_list:
-                self.db.save_many("price_raw_new", item_list)
-        self.db.close()
+                self.save_storage.save_many("price_raw_new", item_list)
+        self.query_storage.close()
+        self.save_storage.close()
