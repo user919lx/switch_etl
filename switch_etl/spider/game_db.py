@@ -21,7 +21,7 @@ class GameDBSpider:
             "code": game.id.text,
             "region": game.region.text,
             "languages": game.languages.text,
-            "genre": game.genre.text if game.genre else None,
+            "genres": game.genre.text if game.genre else None,
             "name": game.attrs["name"],
             "developer": game.developer.text if game.developer else None,
             "publisher": game.publisher.text if game.publisher else None,

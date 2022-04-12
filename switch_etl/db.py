@@ -3,6 +3,7 @@ import struct
 import zlib
 from pymysql.err import OperationalError
 import pandas as pd
+import logging
 
 
 class MySQLStorage:
@@ -71,9 +72,9 @@ class MySQLStorage:
         try:
             self.cursor.execute(sql, values)
             self.db.commit()
-        except OperationalError:
-            print("========================== Save Error ======================================")
-            print(item)
+        except OperationalError as e:
+            logging.info(f"========================== Save Error {e}======================================")
+            logging.info(item)
 
     def save_many(self, table, item_list, compress_keys=[], escape_cols=[]):
         item_dict = item_list[0]
