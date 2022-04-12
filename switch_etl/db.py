@@ -44,6 +44,10 @@ class MySQLStorage:
             values = values * 2
         return values
 
+    def query(self, sql):
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
     def record_iter(self, table, filter_clause="", batch_size=10000):
         sql = f"SELECT * from {table}"
         if filter_clause:

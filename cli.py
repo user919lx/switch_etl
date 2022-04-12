@@ -8,12 +8,12 @@ from switch_etl.spider.game_na import GameNASpider
 from switch_etl.spider.game_db import GameDBSpider
 from switch_etl.pipeline.content import ContentPipeline
 from switch_etl.pipeline.price import PricePipeline
+from switch_etl.pipeline.game_mult import GameMultPipeline
 
 
 def init_logging(
     level_name="info",
     fmt="%(asctime)s - %(levelname)s - %(name)s - %(filename)s:%(lineno)d - [%(process)d:%(threadName)s] - %(message)s",
-    silent_cassandra=True,
 ):
     level = logging.INFO
     if level_name == "info":
@@ -25,10 +25,6 @@ def init_logging(
     elif level_name == "debug":
         level = logging.DEBUG
     logging.basicConfig(level=level, format=fmt)
-
-    if silent_cassandra:
-        # cassandra is too noisy
-        logging.getLogger("cassandra.cluster").setLevel(logging.WARNING)
 
 
 def __upload():
@@ -100,6 +96,12 @@ def db_spider():
 @cli.command()
 def price_etl():
     pipeline = PricePipeline(MYSQL_CONFIG)
+    pipeline.process()
+
+
+@cli.command()
+def game_mult():
+    pipeline = GameMultPipeline(MYSQL_CONFIG)
     pipeline.process()
 
 

@@ -131,15 +131,20 @@ with DAG(
         bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-pipeline -r eu",
         env=env,
     )
+    etl_game_eu = BashOperator(
+        task_id="etl_game_eu",
+        bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-mult",
+        env=env,
+    )
     spider_price = BashOperator(
         task_id="spider_price",
         bash_command=f"cd {crawler_root} && {crawler_python} -m scrapy crawl price",
         env=env,
     )
 
-    spider_game_na_mult = BashOperator(
-        task_id="spider_game_na_mult",
-        bash_command=f"cd {crawler_root} && {crawler_python} -m scrapy crawl game_na_mult",
+    spider_game_deku = BashOperator(
+        task_id="spider_game_deku",
+        bash_command=f"cd {crawler_root} && {crawler_python} -m scrapy crawl game_deku",
         env=env,
     )
 
@@ -150,11 +155,10 @@ with DAG(
     )
 
     spider_game_raw_jp >> etl_game_jp
-    spider_game_raw_na >> etl_game_na
+    spider_game_raw_na >> etl_game_na >> spider_game_deku >> etl_game_mult
     spider_game_raw_eu >> etl_game_eu
     spider_game_raw_hk >> etl_game_hk
     [etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> game_clean
     [spider_eshop, etl_game_jp, etl_game_na, etl_game_eu, etl_game_hk] >> spider_price
-    etl_game_na >> spider_game_na_mult
 
 # spider_eshop -> spider_price -> etl_price_etl
