@@ -63,9 +63,15 @@ class GameDBSpider:
             i = 0
             total = len(games)
             for game in games:
-                data = self.__parse_game(game)
+                # data = self.__parse_game(game)
+                data = {
+                    "unique_id": game.id.text,
+                    "region": "db",
+                    "raw_data": str(game)
+                }
                 try:
-                    self.storage.save("game_db", data)
+                    self.storage.save("game_raw", data, compress_keys=["raw_data"])
+                    # self.storage.save("game_db", data)
                     i += 1
                     if i % 500 == 0:
                         logging.info(f"have saved {i} rows, total = {total}")
@@ -74,7 +80,8 @@ class GameDBSpider:
 
     def fetch_data_all(self):
         self.storage.open()
-        rlist = ["JA", "EN", "ZHCN", "ZHTW"]
+        # rlist = ["JA", "EN", "ZHCN", "ZHTW"]
+        rlist = ["ZHCN"]
         for region in rlist:
             logging.info(f"starting crawl region = {region}")
             self.fetch_data_by_region(region)
