@@ -21,6 +21,7 @@ class GameDBSpider:
             "code": game.id.text,
             "region": game.region.text,
             "languages": game.languages.text,
+            "genre": game.genre.text if game.genre else None,
             "name": game.attrs["name"],
             "developer": game.developer.text if game.developer else None,
             "publisher": game.publisher.text if game.publisher else None,
@@ -40,12 +41,12 @@ class GameDBSpider:
         elif game.find("locale", {"lang": "ZHTW"}):
             data["cn_name"] = convert(game.find("locale", {"lang": "ZHTW"}).title.text, "zh-cn").strip()
 
-        if game.rating_ESRB:
-            data["esrb_rating"] = (game.rating_ESRB.attrs["value"],)
-            data["esrb_rating_desc"] = (",".join([desc.text.strip() for desc in game.find_all("descriptor_ESRB")]),)
-        if game.rating_PEGI:
-            data["pegi_rating"] = (game.rating_PEGI.attrs["value"],)
-            data["pegi_rating_desc"] = (",".join([desc.text.strip() for desc in game.find_all("descriptor_PEGI")]),)
+        for rating_type in ["esrb", "pegi"]:
+            tag = game.find(f"rating_{rating_type}")
+            if tag:
+                data[f"{rating_type}_rating"] = tag.attrs["value"]
+                desc_list = [desc.text.strip() for desc in game.find_all(f"descriptor_{rating_type}")]
+                data[f"{rating_type}_rating_desc"] = ",".join(desc_list) if desc_list else None
         return data
 
     def fetch_data_by_region(self, region):
@@ -60,13 +61,14 @@ class GameDBSpider:
             soup = BeautifulSoup(contents, "html.parser")
             games = soup.find_all("game")
             i = 0
+            total = len(games)
             for game in games:
                 data = self.__parse_game(game)
                 try:
                     self.storage.save("game_db", data)
                     i += 1
                     if i % 500 == 0:
-                        logging.info(f"have saved {i} rows")
+                        logging.info(f"have saved {i} rows, total = {total}")
                 except Exception as e:
                     logging.info(f"error {e} {data}")
 
