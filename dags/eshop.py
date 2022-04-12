@@ -131,8 +131,8 @@ with DAG(
         bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-pipeline -r eu",
         env=env,
     )
-    etl_game_eu = BashOperator(
-        task_id="etl_game_eu",
+    etl_game_mult = BashOperator(
+        task_id="etl_game_mult",
         bash_command=f"cd {switch_etl_root} && {switch_etl_python} cli.py game-mult",
         env=env,
     )
