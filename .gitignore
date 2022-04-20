@@ -1,7 +1,9 @@
 # Project
 data/
+input/
 output/
 supervisor.conf
+local_docs
 
 *.cfg
 start.sh
