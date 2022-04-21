@@ -44,43 +44,8 @@ class GameMultPipeline(Pipeline):
                 "online_max_num_of_players",
             ]
         ]
-        df_deku = df_deku[df_deku["local_num_of_players"].notnull()]
+        df_deku = df_deku[df_deku["local_num_of_players"].notnull()].drop_duplicates(["en_name"])
 
-        sql2 = """
-            select gn.name,mul.local,mul.wireless,mul.online
-            from (select *,replace(substring_index(url,'/',-2),'-switch/','') slug from game_na) gn
-            join (select replace(substring_index(url,'/',-2),'-switch/','') slug,local,wireless,online
-            from game_na_mult where local is not null) mul on gn.slug = mul.slug
-        """
-        df_na_mul = pd.read_sql(sql2, conn)
-
-        def process_mul(row):
-            row["en_name"] = re.sub("[™®]", "", row["name"])
-            mode_list = ["local", "wireless", "online"]
-            for mode in mode_list:
-                num_players = row.get(mode)
-                if num_players:
-                    row[f"{mode}_num_of_players"] = num_players
-                    row[f"{mode}_max_num_of_players"] = num_players.split("-")[-1]
-                else:
-                    row[f"{mode}_num_of_players"] = None
-                    row[f"{mode}_max_num_of_players"] = None
-            return row
-
-        df_na_mul = df_na_mul.apply(process_mul, axis=1)
-        df_na_mul = df_na_mul[
-            [
-                "en_name",
-                "local_num_of_players",
-                "wireless_num_of_players",
-                "online_num_of_players",
-                "local_max_num_of_players",
-                "wireless_max_num_of_players",
-                "online_max_num_of_players",
-            ]
-        ]
-        df_na_mul = df_na_mul[df_na_mul["local_num_of_players"].notnull()]
-        df_all = pd.concat([df_deku, df_na_mul]).drop_duplicates(["en_name"])
-        for row in df_all.to_dict("records"):
+        for row in df_deku.to_dict("records"):
             self.db.save("game_mult", row)
         self.db.close()
